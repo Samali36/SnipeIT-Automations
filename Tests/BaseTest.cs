@@ -3,6 +3,7 @@ using Global360.PageObjects;
 using Global360.Constants;
 using SnipeITTestProject.PageObjects;
 
+
 namespace Global360.Tests.Base
 {
     [TestClass]
@@ -28,11 +29,15 @@ namespace Global360.Tests.Base
 
             Browser = await Playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
             {
-                Headless = false, // Head mode
+                Headless = Environment.GetEnvironmentVariable("HEADLESS") != "false",
             });
 
-            // Default context and page
-            Context = await Browser.NewContextAsync();
+            Context = await Browser.NewContextAsync(new BrowserNewContextOptions
+            {
+                // Video recording setup
+                RecordVideoDir = "videos/",
+                RecordVideoSize = new RecordVideoSize { Width = 1920, Height = 1080 },
+            });
             Page = await Context.NewPageAsync();
 
             // Initialize page objects
@@ -41,7 +46,7 @@ namespace Global360.Tests.Base
             AssetsListPage = new AssetsListPage(Page);
             CreateAssetPage = new CreateAssetPage(Page);
             AssetDetailsPage = new AssetDetailsPage(Page);
-            
+
         }
 
         [TestCleanup]
