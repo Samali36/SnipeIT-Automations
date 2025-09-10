@@ -10,6 +10,7 @@ namespace Global360.PageObjects
         private readonly string _usernameField = "[id='username']";
         private readonly string _passwordField = "[id='password']";
         private readonly string _loginButton = "[id='submit']";
+        private readonly string _successAlert = "[id='success-notification']";
 
         public LoginPage(IPage page) : base(page) { }
 
@@ -28,23 +29,14 @@ namespace Global360.PageObjects
 
         public async Task<bool> IsLoginSuccessfulAsync()
         {
-            try
+            await WaitForLoadingToDisappearAsync();
+            var successLogin = await IsVisibleAsync(_successAlert);
+
+            if (successLogin)
             {
-                var header = await GetTextAsync("h1");
-                if (header.Trim().Equals("Dashboard"))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-                
+                return true;
             }
-            catch
-            {
-                return false;
-            }
+            return false;
         }
     }
 }
